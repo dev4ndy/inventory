@@ -1,4 +1,4 @@
-import { Sequelize, Model, DataTypes, BuildOptions } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { database } from '../config/database';
 
 export class Cellar extends Model {
@@ -18,11 +18,13 @@ Cellar.init(
         name: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
         },
     },
     {
         tableName: 'cellars',
         sequelize: database,
+        underscored: true,
     },
 );
 
