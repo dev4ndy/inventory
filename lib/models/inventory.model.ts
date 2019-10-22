@@ -1,7 +1,10 @@
-import { Sequelize, Model, DataTypes, BuildOptions } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { database } from '../config/database';
 
 export class Inventory extends Model {
+    public id!: number;
+    public itemId: number;
+    public cellarId: number;
     public quantity: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -9,6 +12,11 @@ export class Inventory extends Model {
 
 Inventory.init(
     {
+        id: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            autoIncrement: true,
+            primaryKey: true,
+        },
         quantity: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -17,7 +25,8 @@ Inventory.init(
     },
     {
         tableName: 'inventories',
-        paranoid: false,
+        paranoid: true,
         sequelize: database,
+        underscored: true,
     },
 );

@@ -8,5 +8,7 @@ export class Routes {
 
     public routes(app: Application): void {
         app.route('/inventory/cellar').get(this.inventoryController.byCellar);
+        app.route('/inventory/transfer').post(this.inventoryController.transfer);
+
     }
 }
