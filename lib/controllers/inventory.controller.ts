@@ -21,7 +21,7 @@ export class InventoryController {
                 include: [{
                     model: Item,
                     through: {
-                        attributes: ['quantity'],
+                        attributes: ['id', 'quantity'],
                     },
                 }],
             });
@@ -38,7 +38,11 @@ export class InventoryController {
         const transferUnits = +req.body.units;
 
         if (!itemId || !cellarOriginId || !cellarDestinyId || !transferUnits) {
-            return res.status(500).json({ message: 'item id, cellar origin, cellar destiny and units are required.' });
+            return res.status(500).json({ message: 'item id, warehouse origin, warehouse destiny and units are required.' });
+        }
+
+        if (cellarDestinyId === cellarOriginId) {
+            return res.status(500).json({ message: 'The destination\'s warehouse cannot be the same as the original warehouse.' });
         }
 
         let transaction: Transaction;
@@ -47,7 +51,7 @@ export class InventoryController {
 
             const inventory = await Inventory.findOne({
                 attributes: ['id', 'quantity'],
-                where: { cellar_id: cellarOriginId, item_id: itemId },
+                where: { cellarId: cellarOriginId, itemId },
             });
 
             if (inventory == null) {
@@ -68,14 +72,14 @@ export class InventoryController {
 
             const inventoryDestiny = await Inventory.findOne({
                 attributes: ['id', 'quantity'],
-                where: { cellar_id: cellarDestinyId, item_id: itemId },
+                where: { cellarId: cellarDestinyId, itemId },
             });
 
             let inventoryTransfer: Inventory;
             if (!inventoryDestiny) {
                 inventoryTransfer = await Inventory.create({
-                    item_id: itemId,
-                    cellar_id: cellarDestinyId,
+                    itemId,
+                    cellarId: cellarDestinyId,
                     quantity: transferUnits,
                 });
             } else {
@@ -96,7 +100,7 @@ export class InventoryController {
 
             return res.status(200).json({
                 message: 'successful operation',
-                data: inventoryTransfer,
+                data: true,
             });
         } catch (error) {
             if (transaction) { await transaction.rollback(); }
