@@ -4,7 +4,7 @@ export const database = new Sequelize({
     database: 'inventory',
     dialect: 'mysql',
     host: 'localhost',
-    username: 'root',
-    password: '295{&)N`guHaLgam',
+    username: '',
+    password: '',
     port: 3306,
 });
